@@ -38,7 +38,7 @@ export async function getData(
     currency,
     sort: sort || "rank",
     order: order || SORT_DIRECTION_ASCENDING,
-    limit: limit || 100,
+    limit: limit || 1000,
     offset: currentPage && currentEntry && currentPage * currentEntry - currentEntry,
     meta: true,
   };
