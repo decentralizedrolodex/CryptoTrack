@@ -73,6 +73,8 @@
       png64: crypto.png64 || "-",
       change1h: crypto.delta.hour || 0,
       change24h: crypto.delta.day || 0,
+      change7d: crypto.delta.week || 0,
+      change30d: crypto.delta.month || 0,
       changeStatus: getChangeStatus(crypto.code, crypto.delta.hour),
     }));
   }
