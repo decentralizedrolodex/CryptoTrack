@@ -13,7 +13,9 @@ async function fetchData(apiEndpoint: string, requestBody: object) {
     });
 
     if (!response.ok) {
-      throw new Error("Network response was not ok");
+      const errorMessage = `Network response was not ok. Status: ${response.status}, Text: ${await response.text()}`;
+      console.error(errorMessage);
+      throw new Error(errorMessage);
     }
 
     const data = await response.json();
@@ -25,86 +27,77 @@ async function fetchData(apiEndpoint: string, requestBody: object) {
 }
 
 export async function getData(
-  currency?: string | undefined | null,
-  sort?: string | undefined | null,
-  order?: string | undefined | null,
-  limit?: number | undefined | null,
-  currentPage?: number | undefined | null,
-  currentEntry?: number | undefined | null
+  currency?: string | null,
+  sort: string = "rank",
+  order: string = SORT_DIRECTION_ASCENDING,
+  limit: number = 100,
+  currentPage?: number | null,
+  currentEntry?: number | null
 ) {
   dataLoading.set(true);
-  const apiEndpoint = "https://api.livecoinwatch.com/coins/list";
-  const requestBody = {
-    currency,
-    sort: sort || "rank",
-    order: order || SORT_DIRECTION_ASCENDING,
-    limit: limit || 100,
-    offset: currentPage && currentEntry && currentPage * currentEntry - currentEntry,
-    meta: true,
-  };
-  let data;
   try {
-    data = await fetchData(apiEndpoint, requestBody);
-    return data;
+    const apiEndpoint = "https://api.livecoinwatch.com/coins/list";
+    const requestBody = {
+      currency,
+      sort,
+      order,
+      limit,
+      offset: currentPage && currentEntry && currentPage * currentEntry - currentEntry,
+      meta: true,
+    };
+    return await fetchData(apiEndpoint, requestBody);
   } finally {
     dataLoading.set(false);
   }
 }
 
 export async function getHistoricalData(
-  code: string | undefined | null,
-  currency: string | undefined | null,
-  start: number | undefined | null,
-  end: number | undefined | null
+  code: string | null,
+  currency: string | null,
+  start: number | null = 0, // Set a default value for start
+  end: number | null = 0    // Set a default value for end
 ) {
   secondaryDetailLoading.set(true);
-  const apiEndpoint = "https://api.livecoinwatch.com/coins/single/history";
-  const requestBody = {
-    currency,
-    code,
-    meta: true,
-    start,
-    end,
-  };
-  let data;
   try {
-    data = await fetchData(apiEndpoint, requestBody);
-    return data;
+    const apiEndpoint = "https://api.livecoinwatch.com/coins/single/history";
+    const requestBody = {
+      currency,
+      code,
+      meta: true,
+      start,
+      end,
+    };
+    return await fetchData(apiEndpoint, requestBody);
   } finally {
     secondaryDetailLoading.set(false);
-    // Perform actions here, regardless of success or failure
-    // For example, dataLoading.set(false);
+    // Additional actions, if needed
   }
 }
 
-export async function getOverviewData(currency: string | undefined | null) {
-  const apiEndpoint = "https://api.livecoinwatch.com/overview";
-  const requestBody = {
-    currency,
-    meta: true,
-  };
-  let data;
+export async function getOverviewData(currency: string | null) {
   try {
-    data = await fetchData(apiEndpoint, requestBody);
-    return data;
+    const apiEndpoint = "https://api.livecoinwatch.com/overview";
+    const requestBody = {
+      currency,
+      meta: true,
+    };
+    return await fetchData(apiEndpoint, requestBody);
   } finally {
     // Perform actions here, regardless of success or failure
     // For example, dataLoading.set(false);
   }
 }
 
-export async function getDataSingle(currency: string | undefined | null, code: string | undefined) {
+export async function getDataSingle(currency: string | null, code: string | null) {
   detailLoading.set(true);
-  const apiEndpoint = "https://api.livecoinwatch.com/coins/single";
-  const requestBody = {
-    currency,
-    code,
-    meta: true,
-  };
-  let data;
   try {
-    data = await fetchData(apiEndpoint, requestBody);
-    return data;
+    const apiEndpoint = "https://api.livecoinwatch.com/coins/single";
+    const requestBody = {
+      currency,
+      code,
+      meta: true,
+    };
+    return await fetchData(apiEndpoint, requestBody);
   } finally {
     detailLoading.set(false);
     // Perform actions here, regardless of success or failure
