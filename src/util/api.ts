@@ -7,7 +7,7 @@ async function fetchData(apiEndpoint: string, requestBody: object) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": API_KEY,
+        "x-api-key": 3ba9fad9-81ac-42fa-9255-688bfe7222a5,
       },
       body: JSON.stringify(requestBody),
     });
